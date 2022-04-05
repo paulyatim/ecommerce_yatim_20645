@@ -6,7 +6,7 @@ const server = express();
 
 server.use(express.json());
 
-server.use('/productos', productos);
-server.use('/carrito', carrito);
+server.use('/api/productos', productos);
+server.use('/api/carrito', carrito);
 
 module.exports = server;
