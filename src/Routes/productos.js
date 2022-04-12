@@ -1,7 +1,13 @@
 const {Router} = require('express');
+const fs = require('fs');
 
 const router = Router();
 const Productos = require('./../../api/Productos.js');
+
+
+function writeProduct(data) {
+    fs.promises.writeFile('./txt/productos.txt', JSON.stringify(data, null, 2));
+}
 
 const productos = new Productos();
 
@@ -18,6 +24,7 @@ router.post('/', (req, res) => {
         const admin = req.query.admin;
         if (admin === 'true') {
             productos.save(req.body)
+            writeProduct(productos.getAll)
             res.status(200).send(`producto ${productos.id} creado`)
         } else {
             res.status(401).send({error: -1, descripcion: 'ruta no autorizada'})
@@ -49,6 +56,7 @@ router.put("/:id", (req, res) => {
             const producto = productos.getById(id)
             if (producto) {
                 productos.update(id, req.body)
+                writeProduct(productos.getAll)
                 res.status(200).send(`Producto ${id} modificado`)
             } else {
                 res.status(404).send('no se encontro un producto con el id ingresado')
@@ -69,6 +77,7 @@ router.delete("/:id", (req, res) => {
             const producto = productos.getById(id);
             if (producto) {
                 productos.deleteById(id);
+                writeProduct(productos.getAll)
                 res.status(200).send(`Producto ${id} borrado`)
             } else {
                 res.status(404).send('no se encontro un producto con el id ingresado')
@@ -80,6 +89,5 @@ router.delete("/:id", (req, res) => {
         res.status(400).send(error)
     }
 })
-
 
 module.exports = router;
